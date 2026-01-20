@@ -4,7 +4,8 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import io.cucumber.java.en.Then;
 import io.restassured.RestAssured;
-
+import utils.APIClient;
+import utils.scenarioContext;
 import io.restassured.response.Response;
 
 import static org.hamcrest.Matchers.is;
@@ -14,59 +15,33 @@ import static io.restassured.RestAssured.given;
 
 
 public class statusCode {
-    private Response response;
+   
+    private final scenarioContext ScenarioContext;
 
-    @When("I send {string} request to {string}")
-    public void i_send_request_to(String request, String endpoint) {
-           switch (request.toUpperCase()) {
-
-            case "GET":
-                response = given()
-                        .when()
-                        .get(endpoint);
-                break;
-
-            case "POST":
-                response = given()
-                        .body("{}")   // placeholder body
-                        .when()
-                        .post(endpoint);
-                break;
-
-            case "PUT":
-                response = given()
-                        .body("{}")
-                        .when()
-                        .put(endpoint);
-                break;
-
-            case "PATCH":
-                response = given()
-                        .body("{}")
-                        .when()
-                        .patch(endpoint);
-                break;
-
-            case "DELETE":
-                response = given()
-                        .when()
-                        .delete(endpoint);
-                break;
-
-            default:
-                throw new IllegalArgumentException(
-                        "Unsupported HTTP method: " + request);
-        }
+    public statusCode(scenarioContext ScenarioContext){
+        this.ScenarioContext=ScenarioContext;
     }
-        
-        // Additional request types (POST, PUT, DELETE) can be handled here
-    
 
-    @Then("status code should be {int}")
-    public void status_code_should_be(Integer statusCode) {
-        assertThat(response.getStatusCode(), is(statusCode));
-        System.out.println("Status = " + response.statusCode());
-        System.out.println("Body = " + response.asString());
+
+    @Given("the API request is initialized")
+    public void the_api_request_is_initialised(){
+        ScenarioContext.setRequest(RestAssured.given());
     }
+
+    @When("user sends a {string} request to {string} endpoint")
+    public void user_send_the_request(String method, String endpoint){
+        Response response=APIClient.sendRequest(method,
+            endpoint,
+            ScenarioContext.getRequest()
+        );
+        ScenarioContext.setResponse(response);
+    }
+
+    @Then("the response status code should be {int}")
+    public void status_code_should_be(int status){
+        assertThat(ScenarioContext.getResponse().statusCode(), is(status));
+    }
+
+
 
 }

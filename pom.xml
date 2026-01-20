@@ -34,6 +34,13 @@
       <scope>test</scope>
     </dependency>
 
+  <dependency>
+    <groupId>io.cucumber</groupId>
+    <artifactId>cucumber-picocontainer</artifactId>
+    <version>7.14.0</version>
+    <scope>test</scope>
+</dependency>
+
     <!-- Rest Assured -->
     <dependency>
       <groupId>io.rest-assured</groupId>
