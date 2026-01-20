@@ -2,9 +2,9 @@ Feature: This is the Feature File for Status Code API
 
 @HappyPath
 Scenario Outline: Happy Path for all the endpoints of Status Code API
-
-When I send "<request>" request to "<endpoint>"
-Then status code should be <statusCode>
+    Given the API request is initialized
+    When user sends a "<request>" request to "<endpoint>" endpoint
+    Then the response status code should be <statusCode>
 Examples:
 | endpoint  | statusCode |request|
 | /get      | 200      |GET|
@@ -12,3 +12,4 @@ Examples:
 | /patch    | 200      |PATCH|
 | /post     | 200      |POST|
 | /put      | 200      |PUT|
+
