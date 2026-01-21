@@ -7,8 +7,13 @@ import io.restassured.RestAssured;
 import utils.APIClient;
 import utils.scenarioContext;
 import io.restassured.response.Response;
+import io.cucumber.datatable.DataTable;
+
 
 import static org.hamcrest.Matchers.is;
+
+import java.util.Map;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static io.restassured.RestAssured.given;
 
@@ -28,12 +33,25 @@ public class statusCode {
         ScenarioContext.setRequest(RestAssured.given());
     }
 
+    @Given("I set headers:")
+    public void set_request_header(DataTable table){
+       Map<String, String> headers = table.asMap();
+        ScenarioContext.getRequest().headers(headers);
+    }
+     @Given("I authenticate using basic auth with username {string} and password {string}")
+    public void set_username_password(String username, String password){
+        ScenarioContext.getRequest().auth().preemptive().basic(username, password);
+       
+    }
+
     @When("user sends a {string} request to {string} endpoint")
     public void user_send_the_request(String method, String endpoint){
+         ScenarioContext.getRequest().log().all();
         Response response=APIClient.sendRequest(method,
             endpoint,
             ScenarioContext.getRequest()
         );
+       
         ScenarioContext.setResponse(response);
     }
 
