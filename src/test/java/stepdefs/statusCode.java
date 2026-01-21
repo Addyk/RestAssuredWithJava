@@ -16,6 +16,7 @@ import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static io.restassured.RestAssured.given;
+import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 
 
 
@@ -59,6 +60,14 @@ public class statusCode {
     public void status_code_should_be(int status){
         assertThat(ScenarioContext.getResponse().statusCode(), is(status));
     }
+
+    @Then("response should match json schema {string}")
+    public void response_should_match_json_schema(String schemaPath) {
+        ScenarioContext.getResponse()
+        .then()
+        .assertThat()
+        .body(matchesJsonSchemaInClasspath(schemaPath));
+}
 
 
 
