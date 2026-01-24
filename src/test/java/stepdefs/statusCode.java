@@ -17,6 +17,8 @@ import java.util.Map;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static io.restassured.RestAssured.given;
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
+import static org.hamcrest.Matchers.containsString;
+
 
 
 
@@ -47,7 +49,6 @@ public class statusCode {
 
     @When("user sends a {string} request to {string} endpoint")
     public void user_send_the_request(String method, String endpoint){
-         ScenarioContext.getRequest().log().all();
         Response response=APIClient.sendRequest(method,
             endpoint,
             ScenarioContext.getRequest()
@@ -68,6 +69,23 @@ public class statusCode {
         .assertThat()
         .body(matchesJsonSchemaInClasspath(schemaPath));
 }
+
+@Then("response headers should be:")
+public void response_headers_should_be(DataTable table) {
+
+    Map<String, String> expectedHeaders = table.asMap(String.class, String.class);
+
+    expectedHeaders.forEach((header, expectedValue) -> {
+        String actualValue = ScenarioContext.getResponse().getHeader(header);
+
+        assertThat(
+            "Header mismatch for: " + header,
+            actualValue,
+            containsString(expectedValue)
+        );
+    });
+}
+
 
 
 
