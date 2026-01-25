@@ -5,7 +5,8 @@ Feature: This is the Feature File for Auth API
 Background:
     Given the API request is initialized
 
-Scenario Outline: Happy Path for Auth API
+@AuthHappy
+Scenario Outline: Happy Path for Auth API using basic auth
      And I set headers:
     | Accept       | application/json |
     | Content-Type | application/json |
@@ -15,4 +16,56 @@ Scenario Outline: Happy Path for Auth API
     And response should match json schema "<filePath>"
 Examples:
 | endpoint                  | statusCode |request | username | password |filePath|
-| /basic-auth/user/passwd   | 200        |GET     |user |passwd|schemas/authResponse.json|
+| /basic-auth/user/passwd   | 200        |GET     |auth.username |auth.password|schemas/Auth/authResponse.json|
+| /hidden-basic-auth/user/passwd   | 200        |GET     |auth.username |auth.password|schemas/Auth/authResponse.json|
+
+@AuthHappy
+Scenario Outline: Happy Path for Auth API using digest auth
+     And I set headers:
+    | Accept       | application/json |
+    | Content-Type | application/json |
+    And I authenticate using digest auth with username "<username>" and password "<password>"
+    When user sends a "<request>" request to "<endpoint>" endpoint
+    Then the response status code should be <statusCode>
+    And response should match json schema "<filePath>"
+Examples:
+| endpoint                  | statusCode |request | username | password |filePath|
+| /digest-auth/auth/user/passwd   | 200        |GET     |auth.username |auth.password|schemas/Auth/authResponse.json|
+| /digest-auth/auth/user/passwd/MD5   | 200        |GET     |auth.username |auth.password|schemas/Auth/authResponse.json|
+| /digest-auth/auth/user/passwd/MD5/30   | 200        |GET     |auth.username |auth.password|schemas/Auth/authResponse.json|
+
+
+ @Bearer
+  Scenario: Bearer token should be accepted
+    And I set bearer token "my-token"
+    When user sends a "GET" request to "/bearer" endpoint
+    Then the response status code should be 200
+    And response should match json schema "schemas/Auth/authResponse.json"
+
+@AuthNegative
+Scenario Outline: Negative Path for Auth API using basic auth
+     And I set headers:
+    | Accept       | application/json |
+    | Content-Type | application/json |
+    And I authenticate using basic auth with username "<username>" and password "<password>"
+    When user sends a "<request>" request to "<endpoint>" endpoint
+    Then the response status code should be <statusCode>
+Examples:
+| endpoint                  | statusCode |request | username | password |
+| /basic-auth/user/passwd   | 401        |GET     |auth.invalidUsername     |auth.password    |
+| /basic-auth/user/passwd   | 401        |GET     |auth.username     |auth.invalidPassword    |
+| /basic-auth/user/passwd   | 401        |GET     |auth.invalidUsername     |auth.invalidPassword    |
+
+@AuthNegative
+Scenario Outline: Negative Path for Auth API using digest auth
+     And I set headers:
+    | Accept       | application/json |
+    | Content-Type | application/json |
+    And I authenticate using digest auth with username "<username>" and password "<password>"
+    When user sends a "<request>" request to "<endpoint>" endpoint
+    Then the response status code should be <statusCode>
+Examples:
+| endpoint                  | statusCode |request | username | password |
+| /basic-auth/user/passwd   | 401        |GET     |auth.invalidUsername     |auth.password    |
+| /basic-auth/user/passwd   | 401        |GET     |auth.username     |auth.invalidPassword    |
+| /basic-auth/user/passwd   | 401        |GET     |auth.invalidUsername     |auth.invalidPassword    |
