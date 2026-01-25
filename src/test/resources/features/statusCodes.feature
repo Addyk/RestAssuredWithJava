@@ -33,3 +33,17 @@ Examples:
 | 204        |PUT|
 | 400        |PUT|
 | 404        |PUT|
+
+
+@Negative @statusCodeNegative
+Scenario Outline: Invalid status code should return client error
+  Given the API request is initialized
+  And user set path parameter "code" as "<invalidCode>"
+  When user sends a "GET" request to "/status/{code}" endpoint
+  Then the response status code should be 400
+
+Examples:
+  | invalidCode |
+  | test        |
+  | abc         |
+  | ^%&         |
