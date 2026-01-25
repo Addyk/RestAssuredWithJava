@@ -14,14 +14,14 @@ public class APIClient {
                 throw new IllegalStateException("Request is not initalized");
             }
 
-            return switch(method.toUpperCase()){
-                case "GET"-> request.get(endpoint);
-                case "POST"-> request.post(endpoint);
-                case "PUT"-> request.put(endpoint);
-                case "DELETE"-> request.delete(endpoint);
-                case "PATCH"-> request.patch(endpoint);
-                default -> throw new IllegalArgumentException("Invalid HTTP method: " + method);
-            };
+            return switch (method.toUpperCase()) {
+            case "GET" -> request.when().get(endpoint);
+            case "DELETE" -> request.when().delete(endpoint);
+            case "POST" -> request.when().post(endpoint);
+            case "PUT" -> request.when().put(endpoint);
+            case "PATCH" -> request.when().patch(endpoint);
+            default -> throw new IllegalArgumentException("Invalid method: " + method);
+        };
 
 
         }

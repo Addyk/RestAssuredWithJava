@@ -13,6 +13,7 @@ import io.cucumber.datatable.DataTable;
 import static org.hamcrest.Matchers.is;
 
 import java.util.Map;
+import utils.configReader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static io.restassured.RestAssured.given;
@@ -43,9 +44,20 @@ public class statusCode {
     }
      @Given("I authenticate using basic auth with username {string} and password {string}")
     public void set_username_password(String username, String password){
-        ScenarioContext.getRequest().auth().preemptive().basic(username, password);
+        ScenarioContext.getRequest().auth().preemptive().basic(configReader.getProperty(username), configReader.getProperty(password));
        
     }
+    @Given("I authenticate using digest auth with username {string} and password {string}")
+    public void set_digest_username_password(String username, String password){
+        ScenarioContext.getRequest().auth().digest(configReader.getProperty(username), configReader.getProperty(password));
+       
+    }
+    @Given("I set bearer token {string}")
+    public void set_bearer_token(String token){
+        ScenarioContext.getRequest().header("Authorization", "Bearer " + configReader.getProperty("bearer.token"));
+       
+    }
+
 
     @When("user sends a {string} request to {string} endpoint")
     public void user_send_the_request(String method, String endpoint){
