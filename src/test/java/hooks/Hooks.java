@@ -7,6 +7,7 @@ import io.restassured.RestAssured;
 
 import java.io.InputStream;
 import java.util.Properties;
+import utils.configReader;
 
 
 public class Hooks {
@@ -15,18 +16,14 @@ public class Hooks {
 public void setUp() {
     
     Properties props=new Properties();
-    try(InputStream input=
-        Hooks.class.getClassLoader().getResourceAsStream("config.properties")){ 
-            if(input==null){
-                throw new RuntimeException("Could not find config.properties file");
-            }
-            props.load(input);
-            RestAssured.baseURI=props.getProperty("baseUrl");
-            System.out.println("BASE URI = " + RestAssured.baseURI);
+    try{ 
+            RestAssured.baseURI=configReader.getProperty("baseUrl");
         }catch(Exception e){
             e.printStackTrace();
             throw new RuntimeException("Failed to load configuration: " + e.getMessage());
         }
+
+         RestAssured.baseURI=configReader.getProperty("baseUrl");
 
     }
 }
