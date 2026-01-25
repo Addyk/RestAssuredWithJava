@@ -52,4 +52,6 @@ Scenario Outline: Negative Path for Auth API
     Then the response status code should be <statusCode>
 Examples:
 | endpoint                  | statusCode |request | username | password |
-| /basic-auth/user/passwd   | 401        |GET     |user1     |passwd    |
+| /basic-auth/user/passwd   | 401        |GET     |auth.invalidUsername     |auth.password    |
+| /basic-auth/user/passwd   | 401        |GET     |auth.username     |auth.invalidPassword    |
+| /basic-auth/user/passwd   | 401        |GET     |auth.invalidUsername     |auth.invalidPassword    |
