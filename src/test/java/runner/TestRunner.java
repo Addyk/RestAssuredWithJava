@@ -10,7 +10,7 @@ import io.cucumber.junit.CucumberOptions;
 @CucumberOptions(
     features = "src/test/resources/features",
     glue = {"stepdefs","hooks"},
-    tags = "@statusCodeNegative",
+    tags = "@requestInspection",
     plugin = {"pretty", "html:target/cucumber-reports.html"},
     monochrome = true
 )

@@ -9,16 +9,13 @@ import utils.scenarioContext;
 import io.restassured.response.Response;
 import io.cucumber.datatable.DataTable;
 
-
-import static org.hamcrest.Matchers.is;
-
 import java.util.Map;
 import utils.configReader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static io.restassured.RestAssured.given;
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
-import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.*;
 
 
 
@@ -105,6 +102,58 @@ public void response_headers_should_be(DataTable table) {
         );
     });
 }
+
+@Then("response json fields should be:")
+public void response_headers_from_body_should_be(DataTable table) {
+
+    Map<String, String> expectedHeaders = table.asMap(String.class, String.class);
+
+    expectedHeaders.forEach((headerName, expectedValue) -> {
+
+        String actualValue = ScenarioContext
+                .getResponse()
+                .jsonPath()
+                .getString(headerName);
+
+        assertThat(
+            "Header mismatch for: " + headerName,
+            actualValue,
+            equalTo(expectedValue)
+        );
+    });
+}
+
+@Then("response json field {string} should not be empty")
+public void response_json_field_should_not_be_empty(String jsonPath) {
+
+    String value = ScenarioContext
+            .getResponse()
+            .jsonPath()
+            .getString(jsonPath);
+
+    assertThat("JSON field is missing: " + jsonPath, value, notNullValue());
+    assertThat("JSON field is empty: " + jsonPath, value.trim().length(), greaterThan(0));
+
+
+}
+
+@Then("response json field {string} should match regex {string}")
+public void response_json_field_should_match_regex(String jsonPath, String regex) {
+
+    String value = ScenarioContext
+            .getResponse()
+            .jsonPath()
+            .getString(jsonPath);
+
+    assertThat("JSON field missing: " + jsonPath, value, notNullValue());
+    assertThat(
+        "Regex mismatch for jsonPath: " + jsonPath,
+        value,
+        matchesPattern(regex)
+    );
+}
+
+
 
 
 
