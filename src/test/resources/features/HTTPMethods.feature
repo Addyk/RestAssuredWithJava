@@ -1,4 +1,4 @@
-Feature: This is the Feature File for Status Code API
+Feature: This is the Feature File for HTTP Methods API
 
 @HappyPath
 Scenario Outline: Happy Path for all the endpoints of Status Code API

@@ -42,6 +42,14 @@ public class statusCode {
        Map<String, String> headers = table.asMap();
         ScenarioContext.getRequest().headers(headers);
     }
+
+    @Given("user set path parameter {string} as {string}")
+    public void set_path_param(String key, String value) {
+        ScenarioContext.setRequest(
+            ScenarioContext.getRequest().pathParam(key, value)
+        );
+    }
+
      @Given("I authenticate using basic auth with username {string} and password {string}")
     public void set_username_password(String username, String password){
         ScenarioContext.getRequest().auth().preemptive().basic(configReader.getProperty(username), configReader.getProperty(password));
