@@ -47,3 +47,11 @@ Examples:
   | test        |
   | abc         |
   | ^%&         |
+
+
+  @Negative @statusCodeNegative
+Scenario: Missing status code path param
+  Given the API request is initialized
+  When user sends a "GET" request to "/status" endpoint
+  Then the response status code should be 404
+
