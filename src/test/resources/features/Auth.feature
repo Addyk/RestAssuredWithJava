@@ -35,7 +35,12 @@ Examples:
 | /digest-auth/auth/user/passwd/MD5/30   | 200        |GET     |auth.username |auth.password|schemas/Auth/authResponse.json|
 
 
-
+ @Bearer
+  Scenario: Bearer token should be accepted
+    And I set bearer token "my-token"
+    When user sends a "GET" request to "/bearer" endpoint
+    Then the response status code should be 200
+    And response should match json schema "schemas/Auth/authResponse.json"
 
 @AuthNegative
 Scenario Outline: Negative Path for Auth API
